@@ -32,13 +32,13 @@ options.register('runUniqueKey',
     "Unique run key from RCMS for Frontier")
 
 options.register('runNumber',
-                 355380,
+                 362167,
                  VarParsing.VarParsing.multiplicity.singleton,
                  VarParsing.VarParsing.varType.int,
                  "Run number. This run number has to be present in the dataset configured with the dataset option.")
 
 options.register('dataset',
-                 '/ExpressPhysics/Run2022B-Express-v1/FEVT',
+                 '/ExpressPhysics/Run2022F-Express-v1/FEVT',
                  VarParsing.VarParsing.multiplicity.singleton,
                  VarParsing.VarParsing.varType.string,
                  "Dataset name like '/ExpressCosmics/Commissioning2021-Express-v1/FEVT'")
