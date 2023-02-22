@@ -27,7 +27,7 @@ void GEMPadDigiClusterSource::bookHistograms(DQMStore::IBooker& ibooker, edm::Ru
     return;
   loadChambers();
 
-  strFolderMain_ = "GEM/PadDigisCluster";
+  strFolderMain_ = "GEM/PadDigiCluster";
 
   fRadiusMin_ = 120.0;
   fRadiusMax_ = 250.0;
@@ -61,7 +61,7 @@ void GEMPadDigiClusterSource::bookHistograms(DQMStore::IBooker& ibooker, edm::Ru
 
   mapBX_ = MEMap2Inf(this, "bx", "Digi Bunch Crossing", 21, nBXMin_ - 0.5, nBXMax_ + 0.5, "Bunch crossing");
 
-  mapDigiOccPerCh_ = MEMap4Inf(this, "occ", "Digi Occupancy", 1, -0.5, 1.5, 1, 0.5, 1.5, "Digi", "iEta");
+  mapPadDigiOccPerCh_ = MEMap4Inf(this, "occ", "Pad Digi Occupancy", 1, -0.5, 1.5, 1, 0.5, 1.5, "Pad", "iEta");
 
   if (nRunType_ == GEMDQM_RUNTYPE_OFFLINE) {
     mapDigiWheel_layer_.TurnOff();
@@ -70,7 +70,7 @@ void GEMPadDigiClusterSource::bookHistograms(DQMStore::IBooker& ibooker, edm::Ru
 
   if (nRunType_ == GEMDQM_RUNTYPE_RELVAL) {
     mapDigiWheel_layer_.TurnOff();
-    mapDigiOccPerCh_.TurnOff();
+    mapPadDigiOccPerCh_.TurnOff();
     mapTotalDigi_layer_.TurnOff();
   }
 
@@ -139,10 +139,10 @@ int GEMPadDigiClusterSource::ProcessWithMEMap3WithChamber(BookingHelper& bh, ME4
   int nNumVFATPerEta = stationInfo.nMaxVFAT_ / stationInfo.nNumEtaPartitions_;
   int nNumCh = stationInfo.nNumDigi_;
 
-  mapDigiOccPerCh_.SetBinConfX(nNumCh * nNumVFATPerEta, -0.5);
-  mapDigiOccPerCh_.SetBinConfY(stationInfo.nNumEtaPartitions_);
-  mapDigiOccPerCh_.bookND(bh, key);
-  mapDigiOccPerCh_.SetLabelForIEta(key, 2);
+  mapPadDigiOccPerCh_.SetBinConfX(nNumCh * nNumVFATPerEta / 2, -0.5);
+  mapPadDigiOccPerCh_.SetBinConfY(stationInfo.nNumEtaPartitions_);
+  mapPadDigiOccPerCh_.bookND(bh, key);
+  mapPadDigiOccPerCh_.SetLabelForIEta(key, 2);
 
   bh.getBooker()->setCurrentFolder(strFolderMain_);
 
@@ -164,15 +164,23 @@ void GEMPadDigiClusterSource::analyze(edm::Event const& event, edm::EventSetup c
         // ignore data clusters in BX's other than BX0
        // if (usegemPadDigiClustersOnlyInBX0_ and cluster->bx() != 0)
        //   continue;
+       std::cout << "Cluster front: " << cluster->pads().front() << " , Cluster size:  "<< cluster->pads().size() 
+       << " , Cluster BX: " <<  cluster->bx() << " , Cluster station: " << ((*it).first).station()
+       << " , Cluster chamber: " << ((*it).first).chamber() << " , Cluster layer: " << ((*it).first).layer()
+       << " , Cluster eta: " << ((*it).first).roll()<< std::endl;
        
+      ME4IdsKey key4Ch{((*it).first).region(), ((*it).first).station(), ((*it).first).layer(), ((*it).first).chamber()};  
+        for (auto pad=cluster->pads().front(); pad < (cluster->pads().front() + cluster->pads().size()); pad++  ) {
+           mapPadDigiOccPerCh_.Fill(key4Ch, pad , ((*it).first).roll());
         //chamberHistos[type]["cluster_size_data"]->Fill(cluster->pads().size());
         //chamberHistos[type]["cluster_pad_data"]->Fill(cluster->pads().front());
         //chamberHistos[type]["cluster_bx_data"]->Fill(cluster->bx());
+        }
       }
     }
 
   }
-
+ 
 /*
   std::map<ME3IdsKey, Int_t> total_digi_layer;
   std::map<ME3IdsKey, Int_t> total_digi_eta;
@@ -210,7 +218,7 @@ void GEMPadDigiClusterSource::analyze(edm::Event const& event, edm::EventSetup c
         Float_t fR = fRadiusMin_ + (fRadiusMax_ - fRadiusMin_) * (eId.ieta() - 0.5) / stationInfo.nNumEtaPartitions_;
         mapDigiWheel_layer_.Fill(key3, fPhiShift, fR);
 
-        mapDigiOccPerCh_.Fill(key4Ch, d->strip(), eId.ieta());  // Per chamber
+        mapDigiOccPerCh_.Fill(key4Ch, d->strip(), eId.ieta());  // Per chamber ***********************
 
         // For total digis
         total_digi_layer[key3]++;

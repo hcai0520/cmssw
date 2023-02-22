@@ -59,7 +59,7 @@ private:
   MEMap3Inf mapTotalDigiPerEvtIEta_;
   MEMap2Inf mapBX_;
 
-  MEMap4Inf mapDigiOccPerCh_;
+  MEMap4Inf mapPadDigiOccPerCh_;
 
   std::string strFolderMain_;
 
