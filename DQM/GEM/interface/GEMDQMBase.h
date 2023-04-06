@@ -536,7 +536,9 @@ protected:
   /********************/
   virtual int ProcessWithMEMap2WithChamber(BookingHelper &bh, ME3IdsKey key) { return 0; };
   /*********************/
-
+  /********************/
+  virtual int ProcessWithMEMap2WithEtaCh(BookingHelper &bh, ME4IdsKey key) { return 0; };
+  /*********************/
 
   virtual int ProcessWithMEMap3WithChamber(BookingHelper &bh, ME4IdsKey key) { return 0; };   // must be overrided
 
@@ -584,7 +586,7 @@ protected:
   inline Float_t restrictAngle(const Float_t fTheta, const Float_t fStart);
   inline std::string getNameDirLayer(ME3IdsKey key3);
 
-  inline std::string getNameDirChamber(ME3IdsKey key3);
+  inline std::string getNameDirChamber(ME4IdsKey key4);
 
 
   const GEMGeometry *GEMGeometry_;
@@ -598,6 +600,9 @@ protected:
   std::map<ME3IdsKey, bool> MEMap2AbsReWithEtaCheck_;
   /************/
   std::map<ME3IdsKey, bool> MEMap2WithChCheck_;
+  /************/
+  /************/
+  std::map<ME4IdsKey, bool> MEMap2WithEtaChCheck_;
   /************/
   std::map<ME3IdsKey, bool> MEMap3Check_;
   std::map<ME4IdsKey, bool> MEMap3WithChCheck_;
@@ -684,10 +689,10 @@ inline std::string GEMDQMBase::getNameDirLayer(ME3IdsKey key3) {
   return std::string(Form("GE%i1-%c-L%i", nStation, cRegion, nLayer));
 }
 
-inline std::string GEMDQMBase::getNameDirChamber(ME3IdsKey key3) {
-  auto nStation = keyToStation(key3);
-  char cRegion = (keyToRegion(key3) > 0 ? 'P' : 'M');
-  auto nChamber = keyToChamber(key3);
+inline std::string GEMDQMBase::getNameDirChamber(ME4IdsKey key4) {
+  auto nStation = keyToStation(key4);
+  char cRegion = (keyToRegion(key4) > 0 ? 'P' : 'M');
+  auto nChamber = keyToChamber(key4);
   return std::string(Form("GE%i1-%c-Ch%i", nStation, cRegion, nChamber));
 }
 #endif  // DQM_GEM_INTERFACE_GEMDQMBase_h

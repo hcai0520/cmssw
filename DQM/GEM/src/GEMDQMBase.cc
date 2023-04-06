@@ -184,6 +184,8 @@ int GEMDQMBase::GenerateMEPerChamber(DQMStore::IBooker& ibooker) {
 
   MEMap3WithChCheck_.clear();
   MEMap4Check_.clear();
+
+  MEMap2WithEtaChCheck_.clear();
   for (auto gid : listChamberId_) {
     ME2IdsKey key2{gid.region(), gid.station()};
     ME3IdsKey key3{gid.region(), gid.station(), gid.layer()};
@@ -228,6 +230,9 @@ int GEMDQMBase::GenerateMEPerChamber(DQMStore::IBooker& ibooker) {
     for (auto iEta : mapEtaPartition_[gid]) {
       GEMDetId eId = iEta->id();
       ME4IdsKey key4{gid.region(), gid.station(), gid.layer(), eId.ieta()};
+      /*******************/
+      ME4IdsKey key2WithEtaCh{gid.region(), gid.station(),eId.ieta(),gid.chamber()}; 
+      /******************/
       ME3IdsKey key2WithEta{gid.region(), gid.station(), eId.ieta()};
       ME3IdsKey key2AbsReWithEta{std::abs(gid.region()), gid.station(), eId.ieta()};
       if (!MEMap4Check_[key4]) {
@@ -236,6 +241,16 @@ int GEMDQMBase::GenerateMEPerChamber(DQMStore::IBooker& ibooker) {
         BookingHelper bh4(ibooker, strSuffixName, strSuffixTitle);
         ProcessWithMEMap4(bh4, key4);
         MEMap4Check_[key4] = true;
+      }
+      if (!MEMap2WithEtaChCheck_[key2WithEtaCh]) {
+        Int_t nCh = gid.chamber();
+      //Int_t nLa = gid.layer();
+        char cLS = (nCh % 2 == 0 ? 'L' : 'S'); 
+        auto strSuffixName = GEMUtils::getSuffixName(key2) + Form("-%02i-%c-E%02i", nCh,  cLS, eId.ieta());
+        auto strSuffixTitle = GEMUtils::getSuffixTitle(key2) + Form("-%02i-%c-E%02i", nCh,  cLS, eId.ieta());
+        BookingHelper bh4(ibooker, strSuffixName, strSuffixTitle);
+        ProcessWithMEMap2WithEtaCh(bh4, key2WithEtaCh);
+        MEMap2WithEtaChCheck_[key2WithEtaCh] = true;
       }
       if (!MEMap2WithEtaCheck_[key2WithEta]) {
         auto strSuffixName = GEMUtils::getSuffixName(key2) + Form("-E%02i", eId.ieta());
