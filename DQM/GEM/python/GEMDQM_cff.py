@@ -5,7 +5,7 @@ from DQM.GEM.GEMRecHitSource_cfi import *
 from DQM.GEM.GEMDAQStatusSource_cfi import *
 from DQM.GEM.GEMDQMHarvester_cfi import *
 from DQM.GEM.GEMPadDigiClusterSource_cfi import *
-
+from DQM.GEM.GEMDigiPadAnalysis_cfi import *
 
 GEMDQM = cms.Sequence(
   GEMDigiSource
