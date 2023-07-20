@@ -32,25 +32,25 @@ options.register('runUniqueKey',
     "Unique run key from RCMS for Frontier")
 
 options.register('runNumber',
-                 367232,
+                 370293,
                  VarParsing.VarParsing.multiplicity.singleton,
                  VarParsing.VarParsing.varType.int,
                  "Run number. This run number has to be present in the dataset configured with the dataset option.")
 
 options.register('dataset',
-                 '/ExpressPhysics/Run2023C-Express-v1/FEVT',
+                 '/ExpressPhysics/Run2023D-Express-v1/FEVT',
                  VarParsing.VarParsing.multiplicity.singleton,
                  VarParsing.VarParsing.varType.string,
                  "Dataset name like '/ExpressCosmics/Commissioning2021-Express-v1/FEVT'")
 
 options.register('maxLumi',
-                 19,
+                 25,
                  VarParsing.VarParsing.multiplicity.singleton,
                  VarParsing.VarParsing.varType.int,
                  "Only lumisections up to maxLumi are processed.")
 
 options.register('minLumi',
-                 19,
+                 15,
                  VarParsing.VarParsing.multiplicity.singleton,
                  VarParsing.VarParsing.varType.int,
                  "Only lumisections starting from minLumi are processed.")
@@ -62,7 +62,7 @@ options.register('lumiPattern',
                  "Only lumisections with numbers matching lumiPattern are processed.")
 
 options.register('eventsPerLumi',
-                 1000,
+                 50000,
                  VarParsing.VarParsing.multiplicity.singleton,
                  VarParsing.VarParsing.varType.int,
                  "This number of last events in each lumisection will be processed.")
